@@ -1,0 +1,4 @@
+I need to re-create this indicator/strategy  in PineScript.
+
+Return the final PineScript code as a .txt file (not as a .pine file).
+

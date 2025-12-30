@@ -1,0 +1,215 @@
+:root {
+    --bg-color: #131722;
+    --panel-bg: #1e222d;
+    --border-color: #2a2e39;
+    --text-primary: #d1d4dc;
+    --text-secondary: #787b86;
+    --accent-color: #2962ff;
+    --success-color: #00ff88;
+    /* Brighter Neon Green */
+    --danger-color: #ff3333;
+    /* Brighter Neon Red */
+    --hover-bg: #2a2e39;
+    --header-bg: #161a25;
+    /* Slightly lighter than BG for separation */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Trebuchet MS", Roboto, Ubuntu, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Header / Toolbar */
+header {
+    height: 70px;
+    /* Increased from 50px */
+    background-color: var(--header-bg);
+    border-bottom: 2px solid var(--border-color);
+    /* Thicker border */
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    /* More padding */
+    justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    /* Add shadow for depth */
+    z-index: 10;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.header-divider {
+    width: 1px;
+    height: 24px;
+    background-color: var(--border-color);
+}
+
+.symbol-name {
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--text-primary);
+}
+
+/* Info Groups in Header */
+.info-group {
+    display: flex;
+    flex-direction: column;
+    /* Stack label and value */
+    justify-content: center;
+    gap: 2px;
+    padding: 0 12px;
+}
+
+.info-label {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 20px;
+    /* Much bigger */
+    font-weight: 700;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    /* Subtle glow */
+}
+
+.info-value.small-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.info-value.up {
+    color: var(--success-color);
+    text-shadow: 0 0 8px rgba(0, 255, 136, 0.3);
+    /* Neon Green Glow */
+}
+
+.info-value.down {
+    color: var(--danger-color);
+    text-shadow: 0 0 8px rgba(255, 51, 51, 0.3);
+    /* Neon Red Glow */
+}
+
+
+.signal-badge {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    /* Bigger */
+    font-weight: 800;
+    display: inline-block;
+    letter-spacing: 1px;
+}
+
+.signal-LONG {
+    background-color: rgba(0, 255, 136, 0.15);
+    color: var(--success-color);
+    border: 1px solid rgba(0, 255, 136, 0.4);
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.1);
+}
+
+.signal-FLAT {
+    background-color: rgba(120, 123, 134, 0.2);
+    color: #a0a0a0;
+    border: 1px solid rgba(120, 123, 134, 0.4);
+}
+
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Zoom Buttons */
+.zoom-group {
+    display: flex;
+    gap: 2px;
+    background-color: transparent;
+}
+
+.zoom-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.1s;
+}
+
+.zoom-btn:hover {
+    color: var(--text-primary);
+    background-color: var(--hover-bg);
+}
+
+.zoom-btn.active {
+    color: var(--accent-color);
+    background-color: rgba(41, 98, 255, 0.1);
+}
+
+/* Toolbar Buttons */
+.tool-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: background 0.1s;
+}
+
+.tool-btn:hover {
+    background-color: var(--hover-bg);
+}
+
+.refresh-btn {
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
+.refresh-btn:hover {
+    background-color: rgba(41, 98, 255, 0.1);
+}
+
+/* Main Layout */
+main {
+    flex: 1;
+    display: flex;
+    height: calc(100vh - 70px);
+    /* Adjust for new header height */
+}
+
+.chart-area {
+    flex: 1;
+    position: relative;
+    background-color: var(--bg-color);
+}
+
+#main-chart {
+    width: 100%;
+    height: 100%;
+}
