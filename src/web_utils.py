@@ -137,14 +137,16 @@ def get_eth_data_with_live():
             live_df = live_df[['Open', 'High', 'Low', 'Close', 'Volume']]
             live_df.index = live_df.index.tz_localize(None)
             
-            latest_date = live_df.index[-1]
+            # Merge live data
+            # live_df contains recent days. df contains history.
+            # We want to keep all history, but overwrite overlapping days with fresh live data,
+            # and append any new days (gap filling).
             
-            if latest_date not in df.index:
-                # Append
-                df = pd.concat([df, live_df.tail(1)])
-            else:
-                # Update
-                df.loc[latest_date] = live_df.iloc[-1]
+            # Concatenate both
+            df = pd.concat([df, live_df])
+            
+            # Remove duplicates, keeping the last occurrence (live data)
+            df = df[~df.index.duplicated(keep='last')]
             
             df = df.sort_index()
             

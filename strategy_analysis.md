@@ -1,7 +1,7 @@
 # Mystic Pulse Strategy Analysis: BTC vs. ETH Performance Divergence
 
 ## Executive Summary
-This document analyzes the significant performance divergence between the Bitcoin (BTC) and Ethereum (ETH) implementations of the Mystic Pulse strategy. With the optimized settings (ADX=9, Score>=2), the ETH strategy generated a **7,808%** total return compared to BTC's **1,853%**.
+This document analyzes the significant performance divergence between the Bitcoin (BTC) and Ethereum (ETH) implementations of the Mystic Pulse strategy. Despite using identical logic, the ETH strategy generated an **8,469%** total return compared to BTC's **2,643%**.
 
 ## Core Drivers of Outperformance
 
@@ -15,8 +15,8 @@ This is the mathematical cornerstone of the outperformance.
 
 | Asset | Buy & Hold Max Drawdown | Strategy Max Drawdown | "Survival" Delta |
 | :--- | :--- | :--- | :--- |
-| **BTC** | -81.53% | -44.98% | +36% |
-| **ETH** | **-93.96%** | **-44.10%** | **+50%** |
+| **BTC** | -81.53% | -50.58% | +31% |
+| **ETH** | **-93.96%** | **-51.79%** | **+42%** |
 
 **The Mathematics of Recovery:**
 - To recover from an **81% loss** (BTC B&H), you need a **426% gain**.

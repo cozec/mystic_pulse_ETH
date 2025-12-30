@@ -208,7 +208,7 @@ function renderChart(data) {
             color: '#2962ff',
             line: { color: 'white', width: 1 }
         },
-        text: data.events.entries.prices.map(p => 'Bull Start'),
+        text: data.events.entries.prices.map(p => `Bull Start<br>$${p.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`),
         textposition: 'bottom center',
         textfont: {
             family: 'sans-serif',
@@ -231,7 +231,7 @@ function renderChart(data) {
             color: '#be0a2e', // Darker Red for exit
             line: { color: 'white', width: 1 }
         },
-        text: data.events.exits.prices.map(p => 'Trend Break'),
+        text: data.events.exits.prices.map(p => `Trend Break<br>$${p.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`),
         textposition: 'top center',
         textfont: {
             family: 'sans-serif',
