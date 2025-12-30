@@ -25,9 +25,12 @@ def run_strategy(ticker="BTC-USD", csv_filename="btcusd.csv"):
     # Let's keep all data for calc, then filter for signals.
     
     # 2. Inputs
-    adx_length = 9
+    adx_length = 9 # Validated Best Balance (Equity/Safety)
     smoothing_factor = 1 # OHLC SMA length. 1 means no smoothing.
     
+    # ... (lines skipped) ...
+
+
     # 3. Core Calculations
     # OHLC Smoothing (SMA 1 = Raw values)
     # If smoothing_factor > 1, use rolling mean.
@@ -194,7 +197,8 @@ def run_strategy(ticker="BTC-USD", csv_filename="btcusd.csv"):
     # exitCondition = score <= 0.
     # So yes, Position = 1 if score > 0, else 0.
     
-    df['signal'] = np.where((df['trend_score'] > 0) & df['in_range'], 1, 0)
+    # Signal: Enter when Trend is established (Score >= 2)
+    df['signal'] = np.where((df['trend_score'] >= 2) & df['in_range'], 1, 0)
     
     # Calculate Returns
     # 100% Equity.

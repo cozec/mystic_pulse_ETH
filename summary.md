@@ -16,29 +16,29 @@ This project is set up to download and analyze Crypto (BTC, ETH) and backtest th
 
 #### Performance Matrix (2018-Present)
 
-| Metric | BTC Strategy | BTC Buy & Hold | ETH Strategy | ETH Buy & Hold |
-| :--- | :--- | :--- | :--- | :--- |
-| **Final Equity** ($10k) | **$274k** | $63k | **$857k** | $39k |
-| **Total Return** | **2,643%** | 528% | **8,469%** | 292% |
-| **CAGR** | **51.47%** | 25.91% | **74.66%** | 18.67% |
-| **Max Drawdown** | **-50.58%** | -81.53% | **-51.79%** | -93.96% |
-| **Volatility (Ann.)** | **41.21%** | 64.84% | **56.37%** | 85.02% |
-| **Sharpe Ratio** | **1.21** | 0.69 | **1.27** | 0.63 |
-| **Sortino Ratio** | **1.34** | 0.92 | **1.36** | 0.86 |
-| **Calmar Ratio** | **1.02** | 0.32 | **1.44** | 0.20 |
+| Metric | BTC Strategy | BTC Buy & Hold | ETH Strategy | ETH Strategy Org | ETH Buy & Hold |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Final Equity** ($10k) | **$195k** | $63k | **$791k** | **$857k** | $39k |
+| **Total Return** | **1,853%** | 528% | **7,808%** | **8,469%** | 292% |
+| **CAGR** | **45.16%** | 25.91% | **72.75%** | **74.49%** | 18.56% |
+| **Max Drawdown** | **-44.98%** | -81.53% | **-44.10%** | **-51.79%** | -93.96% |
+| **Volatility (Ann.)** | **38.63%** | 64.84% | **52.79%** | **56.32%** | 84.95% |
+| **Sharpe Ratio** | **1.16** | 0.69 | **1.30** | **1.27** | 0.63 |
+| **Sortino Ratio** | **1.17** | 0.92 | **1.23** | **1.36** | 0.86 |
+| **Calmar Ratio** | **1.00** | 0.32 | **1.65** | **1.44** | 0.20 |
 
 ### Annual Log Returns (ETH Strategy vs B&H)
 
 | Year | Strategy Log Return | Buy & Hold Log Return | Interpretation |
 | :--- | :--- | :--- | :--- |
-| **2018** | **0.02** (+2%) | **-1.73** (-82%) | **CRITICAL SURVIVAL**: Strategy stayed flat while ETH imploded. |
-| **2019** | **0.26** (+29%) | **-0.03** (-3%) | Strategy caught the first signs of recovery. |
-| **2020** | **1.27** (+255%) | **1.74** (+469%) | B&H won the initial rebound from the lows. |
-| **2021** | **1.93** (+585%) | **1.61** (+400%) | **ALPHA GENERATION**: Strategy outperformed during the peak mania. |
-| **2022** | **-0.15** (-14%) | **-1.12** (-67%) | **CRITICAL DEFENSE**: Strategy sidestepped the massive bear market. |
-| **2023** | **0.19** (+21%) | **0.65** (+91%) | Strategy was slow to re-enter (lag). |
-| **2024** | **0.56** (+75%) | **0.38** (+46%) | Strategy caught the trend efficiently. |
-| **2025** | **0.37** (+45%) | **-0.12** (-11%) | Strategy profitable while B&H is down YTD. |
+| **2018** | **0.40** (+49%) | **-1.73** (-82%) | **CRITICAL SURVIVAL**: Strategy stayed flat while ETH imploded. |
+| **2019** | **0.45** (+57%) | **-0.03** (-3%) | Strategy outperformed the recovery. |
+| **2020** | **0.92** (+151%) | **1.74** (+469%) | Slightly lagged the violent V-shape recovery. |
+| **2021** | **1.82** (+517%) | **1.61** (+400%) | **ALPHA GENERATION**: Beat the mania. |
+| **2022** | **0.13** (+14%) | **-1.12** (-67%) | **CRITICAL DEFENSE**: Profitable during bear market. |
+| **2023** | **0.35** (+42%) | **0.65** (+91%) | Lagged the initial rebound. |
+| **2024** | **0.28** (+32%) | **0.38** (+46%) | Steady trend capture. |
+| **2025** | **0.02** (+2%) | **-0.12** (-11%) | **PROFITABLE**: Avoided major loss. |
 
 
 #### Key Highlights
