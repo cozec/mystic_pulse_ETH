@@ -1,5 +1,34 @@
 # Project Summary
 
+**Last Updated**: 2025-12-31
+
+## Current Best Strategy: **Mystic Pulse V2.0**
+
+### Strategy Logic
+A **trend-following** strategy using smoothed ADX/DI derived indicators to capture sustained momentum moves.
+
+| Component | Description |
+|-----------|-------------|
+| **ADX Length** | 9 periods |
+| **OHLC Smoothing** | SMA length 1 (raw prices) |
+| **DI+ / DI-** | Directional Indicators from Wilder's smoothing |
+| **Trend Score** | `positive_count - negative_count` (cumulative trend strength) |
+
+### Entry & Exit Rules
+| Action | Condition |
+|--------|-----------|
+| **BUY** | `Trend Score > 0` |
+| **SELL** | `Trend Score <= 0` |
+
+### 📊 Indicator to Monitor: **Trend Score**
+- **Bullish**: Trend Score > 0 (green bars) → **HOLD / BUY**
+- **Bearish**: Trend Score < 0 (red bars) → **CASH / SELL**
+- **Neutral**: Trend Score = 0 (gray bars) → **EXIT position**
+
+> **Key Insight**: The strategy excels at avoiding major drawdowns by exiting when momentum weakens, then re-entering when a new bullish trend is confirmed.
+
+---
+
 ## Overview
 This project is set up to download and analyze Crypto (BTC, ETH) and backtest the "Mystic Pulse" trading strategy.
 
@@ -14,18 +43,18 @@ This project is set up to download and analyze Crypto (BTC, ETH) and backtest th
 ### Mystic Pulse V2.0 (Converted from Pine Script)
 **Core Logic**: Trend-following using smoothed ADX/DI derived indicators (Trend Score).
 
-#### Performance Matrix (2018-Present)
+#### Performance Matrix (2018-Present) — *Validated 2025-12-31*
 
 | Metric | BTC Strategy | BTC Buy & Hold | ETH Strategy | ETH Buy & Hold |
 | :--- | :--- | :--- | :--- | :--- |
-| **Final Equity** ($10k) | **$274k** | $63k | **$857k** | $39k |
-| **Total Return** | **2,643%** | 528% | **8,469%** | 292% |
-| **CAGR** | **51.47%** | 25.91% | **74.66%** | 18.67% |
+| **Final Equity** ($10k) | **$274k** | $63k | **$868k** | $39k |
+| **Total Return** | **2,641%** | 527% | **8,577%** | 293% |
+| **CAGR** | **51.27%** | 25.78% | **74.70%** | 18.67% |
 | **Max Drawdown** | **-50.58%** | -81.53% | **-51.79%** | -93.96% |
-| **Volatility (Ann.)** | **41.21%** | 64.84% | **56.37%** | 85.02% |
+| **Volatility (Ann.)** | **41.15%** | 64.75% | **56.30%** | 84.92% |
 | **Sharpe Ratio** | **1.21** | 0.69 | **1.27** | 0.63 |
 | **Sortino Ratio** | **1.34** | 0.92 | **1.36** | 0.86 |
-| **Calmar Ratio** | **1.02** | 0.32 | **1.44** | 0.20 |
+| **Calmar Ratio** | **1.01** | 0.32 | **1.44** | 0.20 |
 
 ### Annual Log Returns (ETH Strategy vs B&H)
 
@@ -42,8 +71,8 @@ This project is set up to download and analyze Crypto (BTC, ETH) and backtest th
 
 
 #### Key Highlights
-1.  **Massive Outperformance**: On ETH, the strategy delivered **~29x** the return of Buy & Hold given the same starting capital ($8.5M vs $390k).
-2.  **Drawdown Protection**: Consistently capped drawdowns at ~50% across both assets, while Buy & Hold suffered 80-94% losses.
+1.  **Massive Outperformance**: On ETH, the strategy delivered **~22x** the return of Buy & Hold given the same starting capital ($868k vs $39k).
+2.  **Drawdown Protection**: Consistently capped drawdowns at ~50% across both assets, while Buy & Hold suffered 82-94% losses.
 3.  **Consistency**: Sharpe Ratio > 1.2 for both assets indicates robust risk-adjusted performance logic.
 
 - **Script**: `src/mystic_pulse_strategy.py` (Supports CLI args: `ticker` `csv_file`)

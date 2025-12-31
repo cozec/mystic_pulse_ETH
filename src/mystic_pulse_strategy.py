@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 
-def run_strategy(ticker="BTC-USD", csv_filename="btcusd.csv"):
+def run_strategy(ticker="BTC-USD", csv_filename="btcusd.csv", return_metrics=False, plot_results=True):
     print(f"Running Mystic Pulse Strategy for {ticker}...")
     # 1. Load Data
     data_path = os.path.join("data", csv_filename)
@@ -491,155 +491,171 @@ def run_strategy(ticker="BTC-USD", csv_filename="btcusd.csv"):
         
     print("=" * 60)
     # Plot
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 10), sharex=True)
+    print("=" * 60)
     
-    # Plot 1: Equity Curve
-    ax1.plot(df_sim.index, df_sim['Equity'], label='Strategy Equity', color='blue')
-    
-    # Buy Hold from start date
-    start_price = df_sim['Open'].iloc[0]
-    bh_shares = 10000 / start_price
-    df_sim['BuyHold'] = bh_shares * df_sim['Close']
-    ax1.plot(df_sim.index, df_sim['BuyHold'], label='Buy & Hold', color='gray', alpha=0.5, linestyle='--')
-    
-    ax1.set_title(f'Mystic Pulse Strategy Equity ({ticker})')
-    ax1.set_ylabel('Equity ($)')
-    ax1.legend()
-    ax1.grid(True)
-    
-    # Plot 2: BTC Price and Signals
-    ax2.plot(df_sim.index, df_sim['Close'], label='BTC Price', color='black', alpha=0.6)
-    
-    # Extract Buy/Sell points for plotting
-    buy_dates = [t['Date'] for t in trades_list if t['Type'] == 'Buy']
-    buy_prices = [t['Price'] for t in trades_list if t['Type'] == 'Buy']
-    
-    sell_dates = [t['Date'] for t in trades_list if t['Type'] == 'Sell']
-    sell_prices = [t['Price'] for t in trades_list if t['Type'] == 'Sell']
-    
-    ax2.scatter(buy_dates, buy_prices, marker='^', color='green', s=100, label='Buy', zorder=5)
-    ax2.scatter(sell_dates, sell_prices, marker='v', color='red', s=100, label='Sell', zorder=5)
-    
-    ax2.set_title('BTC Price & Trade Signals')
-    ax2.set_ylabel('Price ($)')
-    ax2.legend()
-    ax2.grid(True)
-    ax2.set_yscale('log') # Log scale for BTC price is usually better over long term
-    
-    plt.tight_layout()
-    
-    output_plot = os.path.join("plots", f"mystic_pulse_{ticker}_backtest.png")
-    plt.savefig(output_plot)
-    print(f"Plot saved to {output_plot}")
-    
+    if plot_results:
+        # Plot
+        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 10), sharex=True)
+        
+        # Plot 1: Equity Curve
+        ax1.plot(df_sim.index, df_sim['Equity'], label='Strategy Equity', color='blue')
+        
+        # Buy Hold from start date
+        start_price = df_sim['Open'].iloc[0]
+        bh_shares = 10000 / start_price
+        df_sim['BuyHold'] = bh_shares * df_sim['Close']
+        ax1.plot(df_sim.index, df_sim['BuyHold'], label='Buy & Hold', color='gray', alpha=0.5, linestyle='--')
+        
+        ax1.set_title(f'Mystic Pulse Strategy Equity ({ticker})')
+        ax1.set_ylabel('Equity ($)')
+        ax1.legend()
+        ax1.grid(True)
+        
+        # Plot 2: BTC Price and Signals
+        ax2.plot(df_sim.index, df_sim['Close'], label='Price', color='black', alpha=0.6)
+        
+        # Extract Buy/Sell points for plotting
+        buy_dates = [t['Date'] for t in trades_list if t['Type'] == 'Buy']
+        buy_prices = [t['Price'] for t in trades_list if t['Type'] == 'Buy']
+        
+        sell_dates = [t['Date'] for t in trades_list if t['Type'] == 'Sell']
+        sell_prices = [t['Price'] for t in trades_list if t['Type'] == 'Sell']
+        
+        ax2.scatter(buy_dates, buy_prices, marker='^', color='green', s=100, label='Buy', zorder=5)
+        ax2.scatter(sell_dates, sell_prices, marker='v', color='red', s=100, label='Sell', zorder=5)
+        
+        ax2.set_title(f'{ticker} Price & Trade Signals')
+        ax2.set_ylabel('Price ($)')
+        ax2.legend()
+        ax2.grid(True)
+        ax2.set_yscale('log') # Log scale
+        
+        plt.tight_layout()
+        
+        output_plot = os.path.join("plots", f"mystic_pulse_{ticker}_backtest.png")
+        plt.savefig(output_plot)
+        print(f"Plot saved to {output_plot}")
+        plt.close(fig) # close figure to free memory
+
     # Save Results
     res_path = os.path.join("results", f"mystic_pulse_{ticker}_trades.csv")
     pd.DataFrame(trades_list).to_csv(res_path, index=False)
     print(f"Trade log saved to {res_path}")
 
     # --- Best/Worst Trades PDF Generation ---
-    from matplotlib.backends.backend_pdf import PdfPages
-    
-    # 1. Reconstruct Round-Trip Trades
-    round_trips = []
-    current_entry = None
-    
-    for t in trades_list:
-        if t['Type'] == 'Buy':
-            current_entry = t
-        elif t['Type'] == 'Sell' and current_entry is not None:
-            # Calculate PnL
-            # Return = (Exit Price - Entry Price) / Entry Price
-            # Note: This ignores fees for simple "best trade" ranking, or we can use Equity change?
-            # Using Equity change is more accurate for "Net result" but price move is better for "Market move".
-            # User wants "best trades". Usually means % gain.
-            pnl_pct = (t['Price'] - current_entry['Price']) / current_entry['Price'] * 100
+    if plot_results and trades_list:
+        try:
+            from matplotlib.backends.backend_pdf import PdfPages
             
-            round_trips.append({
-                'Entry Date': current_entry['Date'],
-                'Exit Date': t['Date'],
-                'Entry Price': current_entry['Price'],
-                'Exit Price': t['Price'],
-                'PnL %': pnl_pct
-            })
+            # 1. Reconstruct Round-Trip Trades
+            round_trips = []
             current_entry = None
             
-    # Sort by PnL
-    round_trips.sort(key=lambda x: x['PnL %'], reverse=True)
-    
-    best_10 = round_trips[:10]
-    worst_10 = round_trips[-10:]
-    
-    pdf_path = os.path.join("plots", f"mystic_pulse_{ticker}_trade_analysis.pdf")
-    
-    print(f"Generating PDF report: {pdf_path}")
-    
-    with PdfPages(pdf_path) as pdf:
-        # Title Page
-        plt.figure(figsize=(11.69, 8.27)) # A4 landscape
-        plt.text(0.5, 0.5, "Mystic Pulse Strategy\nTrade Analysis\n\nTop 10 Best & Worst Trades", 
-                 horizontalalignment='center', verticalalignment='center', fontsize=24)
-        plt.axis('off')
-        pdf.savefig()
-        plt.close()
-        
-        trades_to_plot = [("Best", t) for t in best_10] + [("Worst", t) for t in worst_10]
-        
-        for rank_type, trade in trades_to_plot:
-            # Defined Context
-            # Buffer: 20 bars before entry, 10 bars after exit
-            start_idx = df_sim.index.get_loc(trade['Entry Date'])
-            end_idx = df_sim.index.get_loc(trade['Exit Date'])
+            for t in trades_list:
+                if t['Type'] == 'Buy':
+                    current_entry = t
+                elif t['Type'] == 'Sell' and current_entry is not None:
+                    pnl_pct = (t['Price'] - current_entry['Price']) / current_entry['Price'] * 100
+                    
+                    round_trips.append({
+                        'Entry Date': current_entry['Date'],
+                        'Exit Date': t['Date'],
+                        'Entry Price': current_entry['Price'],
+                        'Exit Price': t['Price'],
+                        'PnL %': pnl_pct
+                    })
+                    current_entry = None
+                    
+            # Sort by PnL
+            round_trips.sort(key=lambda x: x['PnL %'], reverse=True)
             
-            buffer_before = 30
-            buffer_after = 20
+            best_10 = round_trips[:10]
+            worst_10 = round_trips[-10:]
             
-            plot_start_idx = max(0, start_idx - buffer_before)
-            plot_end_idx = min(len(df_sim) - 1, end_idx + buffer_after)
+            if best_10: # Only if we have completed trades
+                pdf_path = os.path.join("plots", f"mystic_pulse_{ticker}_trade_analysis.pdf")
+                print(f"Generating PDF report: {pdf_path}")
+                
+                with PdfPages(pdf_path) as pdf:
+                    # Title Page
+                    plt.figure(figsize=(11.69, 8.27)) # A4 landscape
+                    plt.text(0.5, 0.5, f"Mystic Pulse Strategy\n{ticker} Trade Analysis\n\nTop 10 Best & Worst Trades", 
+                            horizontalalignment='center', verticalalignment='center', fontsize=24)
+                    plt.axis('off')
+                    pdf.savefig()
+                    plt.close()
+                    
+                    trades_to_plot = [("Best", t) for t in best_10] + [("Worst", t) for t in worst_10]
+                    
+                    for rank_type, trade in trades_to_plot:
+                        # Context: 30 bars before, 20 after
+                        start_idx_loc = df_sim.index.get_loc(trade['Entry Date'])
+                        end_idx_loc = df_sim.index.get_loc(trade['Exit Date'])
+                        
+                        # Handle slice indices safely
+                        # get_loc might return slice/array if duplicate index
+                        if isinstance(start_idx_loc, slice) or isinstance(start_idx_loc, np.ndarray):
+                             # fallback
+                             start_idx = df_sim.index.get_indexer([trade['Entry Date']], method='nearest')[0]
+                        else:
+                             start_idx = start_idx_loc
+
+                        if isinstance(end_idx_loc, slice) or isinstance(end_idx_loc, np.ndarray):
+                             end_idx = df_sim.index.get_indexer([trade['Exit Date']], method='nearest')[0]
+                        else:
+                             end_idx = end_idx_loc
+
+                        buffer_before = 30
+                        buffer_after = 20
+                        
+                        plot_start_idx = max(0, start_idx - buffer_before)
+                        plot_end_idx = min(len(df_sim) - 1, end_idx + buffer_after)
+                        
+                        subset = df_sim.iloc[plot_start_idx : plot_end_idx + 1]
+                        
+                        # Plot
+                        fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(11, 8), sharex=True, gridspec_kw={'height_ratios': [3, 1]})
+                        
+                        # Subplot 1: Price
+                        ax1.plot(subset.index, subset['Close'], label='Price', color='black', alpha=0.7)
+                        
+                        # Entry/Exit Markers
+                        ax1.scatter([trade['Entry Date']], [trade['Entry Price']], color='green', marker='^', s=150, label='Entry', zorder=5)
+                        ax1.scatter([trade['Exit Date']], [trade['Exit Price']], color='red', marker='v', s=150, label='Exit', zorder=5)
+                        
+                        # Connect
+                        ax1.plot([trade['Entry Date'], trade['Exit Date']], [trade['Entry Price'], trade['Exit Price']], 'k--', alpha=0.3)
+                        
+                        title_str = f"{rank_type} Trade | PnL: {trade['PnL %']:.2f}%\nEntry: {trade['Entry Date'].date()} @ {trade['Entry Price']:.2f} | Exit: {trade['Exit Date'].date()} @ {trade['Exit Price']:.2f}"
+                        ax1.set_title(title_str)
+                        ax1.set_ylabel('Price ($)')
+                        ax1.legend()
+                        ax1.grid(True, linestyle=':')
+                        
+                        # Subplot 2: Indicator
+                        scores = subset['trend_score']
+                        colors = ['lime' if s > 0 else ('red' if s < 0 else 'gray') for s in scores]
+                        ax2.bar(subset.index, scores, color=colors, width=0.8, label='Trend Score')
+                        ax2.axhline(0, color='black', linewidth=0.5)
+                        
+                        # Mark Entry/Exit Time
+                        ax2.axvline(trade['Entry Date'], color='green', linestyle='--', alpha=0.5)
+                        ax2.axvline(trade['Exit Date'], color='red', linestyle='--', alpha=0.5)
+                        
+                        ax2.set_title('Indicator: Trend Score')
+                        ax2.set_ylabel('Score')
+                        ax2.grid(True, linestyle=':')
+                        
+                        plt.tight_layout()
+                        pdf.savefig(fig)
+                        plt.close(fig)
+                        
+                print("PDF generation complete.")
+        except Exception as e:
+            print(f"Error generating PDF: {e}")
             
-            subset = df_sim.iloc[plot_start_idx : plot_end_idx + 1]
-            
-            # Plot
-            fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(11, 8), sharex=True, gridspec_kw={'height_ratios': [3, 1]})
-            
-            # Subplot 1: Price
-            ax1.plot(subset.index, subset['Close'], label='Price', color='black', alpha=0.7)
-            
-            # Entry/Exit Markers
-            ax1.scatter([trade['Entry Date']], [trade['Entry Price']], color='green', marker='^', s=150, label='Entry', zorder=5)
-            ax1.scatter([trade['Exit Date']], [trade['Exit Price']], color='red', marker='v', s=150, label='Exit', zorder=5)
-            
-            # Connect Entry/Exit
-            ax1.plot([trade['Entry Date'], trade['Exit Date']], [trade['Entry Price'], trade['Exit Price']], 'k--', alpha=0.3)
-            
-            title_str = f"{rank_type} Trade | PnL: {trade['PnL %']:.2f}%\nEntry: {trade['Entry Date'].date()} @ {trade['Entry Price']:.2f} | Exit: {trade['Exit Date'].date()} @ {trade['Exit Price']:.2f}"
-            ax1.set_title(title_str)
-            ax1.set_ylabel('Price ($)')
-            ax1.legend()
-            ax1.grid(True, linestyle=':')
-            
-            # Subplot 2: Indicator (Trend Score)
-            # Plot Trend Score as bar chart
-            scores = subset['trend_score']
-            colors = ['lime' if s > 0 else ('red' if s < 0 else 'gray') for s in scores]
-            ax2.bar(subset.index, scores, color=colors, width=0.8, label='Trend Score')
-            
-            # Add Threshold line 0
-            ax2.axhline(0, color='black', linestyle='-', linewidth=0.5)
-            
-            # Mark Entry/Exit Time on Indicator
-            ax2.axvline(trade['Entry Date'], color='green', linestyle='--', alpha=0.5)
-            ax2.axvline(trade['Exit Date'], color='red', linestyle='--', alpha=0.5)
-            
-            ax2.set_title('Indicator: Trend Score')
-            ax2.set_ylabel('Score')
-            ax2.grid(True, linestyle=':')
-            
-            plt.tight_layout()
-            pdf.savefig(fig)
-            plt.close(fig)
-            
-    print("PDF generation complete.")
+    if return_metrics:
+        return strat_metrics, bh_metrics, trades_list
 
 if __name__ == "__main__":
     import sys
